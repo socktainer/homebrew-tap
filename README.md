@@ -13,4 +13,4 @@ brew install socktainer
 
 | Source                                                            | Formula                                  | Description                                                           |
 | ----------------------------------------------------------------- | ---------------------------------------- | --------------------------------------------------------------------- |
-| [socktainer/socktainer](https://github.com/socktainer/socktainer) | [socktainer.rb](./Formula/socktainer.rb) | **[Temporary]** Docker-compatible REST API on top of Apple container. |
+| [socktainer/socktainer](https://github.com/socktainer/socktainer) | [socktainer.rb](./Formula/socktainer.rb) | Docker-compatible REST API on top of Apple container. |
