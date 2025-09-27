@@ -1,0 +1,90 @@
+name: Update Socktainer Next Formula
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+        description: 'New version to update in the formula'
+
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        type: string
+        description: 'New version to update in the formula'
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: extract download URL
+        run: |
+          echo "Version: ${{ inputs.version }}"
+
+          # Extract URL pattern from the formula file
+          URL_PATTERN=$(grep -o 'url ".*"' Formula/socktainer-next.rb | sed 's/url "//' | sed 's/"//')
+          echo "URL pattern from formula: $URL_PATTERN"
+
+          # Replace #{version} with the actual version
+          DOWNLOAD_URL=$(echo "$URL_PATTERN" | sed 's/#{version}/${{ inputs.version }}/g')
+          echo "download_url=$DOWNLOAD_URL" >> $GITHUB_ENV
+          echo "Download URL: $DOWNLOAD_URL"
+
+      - name: Download release archive
+        run: |
+          echo "Downloading from: $download_url"
+          curl -L --fail -o release.zip "$download_url"
+
+      - name: Calculate SHA256
+        id: calculate-sha
+        run: |
+          SHA256=$(sha256sum release.zip | cut -d' ' -f1)
+          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
+          echo "Calculated SHA256: $SHA256"
+
+      - name: Update formula version
+        run: |
+          echo "Updating version to: ${{ inputs.version }}"
+
+          # Update version
+          sed -i 's/version ".*"/version "${{ inputs.version }}"/' Formula/socktainer-next.rb
+
+      - name: Update formula SHA256
+        run: |
+          echo "Updating SHA256 to: ${{ steps.calculate-sha.outputs.sha256 }}"
+
+          # Update SHA256
+          sed -i 's/sha256 ".*"/sha256 "${{ steps.calculate-sha.outputs.sha256 }}"/' Formula/socktainer-next.rb
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.name "socktainer-bot"
+          git config --local user.email "socktainer-bot@users.noreply.github.com"
+          git add Formula/socktainer-next.rb
+
+          bumpedBranchName="update-socktainer-next-to-${{ inputs.version }}"
+          git checkout -b "${bumpedBranchName}"
+          COMMIT_MSG="chore: 📢 update socktainer-next to version ${{ inputs.version }}"
+          echo "Committing with message: $COMMIT_MSG"
+          git commit -m "$COMMIT_MSG" -s
+          git push origin "${bumpedBranchName}"
+          echo -e "📢 Bump version to ${{ inputs.version }} as this prereleases is out 🥳" > /tmp/pr-title
+          pullRequestUrl=$(gh pr create --title "chore: 📢 Bump version to ${{ inputs.version }}" --body-file /tmp/pr-title --head "${bumpedBranchName}" --base "main")
+          echo "📢 Pull request created: ${pullRequestUrl}"
+          echo "➡️ Flag the PR as being ready for review"
+          gh pr ready "${pullRequestUrl}"
+          echo "🔅 Mark the PR as being ok to be merged automatically"
+          gh pr merge "${pullRequestUrl}" --auto --rebase
+        env:
+          GITHUB_TOKEN: ${{ secrets.SOCKTAINER_BOT_TOKEN || secrets.GITHUB_TOKEN }}
