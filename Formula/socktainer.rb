@@ -13,7 +13,7 @@ class Socktainer < Formula
   head "https://github.com/socktainer/socktainer.git", branch: "main"
 
   depends_on :macos
-  depends_on xcode: ["26.0", :build]
+  depends_on xcode: ["26.0", :build] if build.head?
   depends_on arch: :arm64
   depends_on macos: :tahoe
 
