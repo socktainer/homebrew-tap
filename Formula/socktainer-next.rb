@@ -17,9 +17,8 @@ class SocktainerNext < Formula
 
   conflicts_with "socktainer", because: "both install `socktainer` binaries"
 
-
   def install
-      bin.install("socktainer")
+    bin.install("socktainer")
   end
 
   service do
