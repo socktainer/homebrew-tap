@@ -1,13 +1,15 @@
 class Socktainer < Formula
-  version "0.9.0"
+  version "0.9.1"
   desc "Docker-compatible REST API on top of Apple container"
   homepage "https://github.com/socktainer/socktainer"
   url "https://github.com/socktainer/socktainer/releases/download/v#{version}/socktainer.zip"
-  sha256 "6726e938a27b600519b6348360b8de5b657cfc0c62e6b18f70f31a34826ab9fe"
+  sha256 "27298733dc662a28c8597ee92251d0023adbfd09877a6d685349ae2a6a5c9874"
   livecheck do
     url(:url)
     strategy(:github_latest)
   end
+
+  conflicts_with "socktainer-next", because: "both install `socktainer` binaries"
 
   license "Apache-2.0"
   head "https://github.com/socktainer/socktainer.git", branch: "main"
