@@ -11,9 +11,11 @@ class SocktainerNext < Formula
 
   license "Apache-2.0"
 
-  depends_on :macos
   depends_on arch: :arm64
-  depends_on macos: :tahoe
+
+  on_macos do
+    depends_on macos: :tahoe
+  end
 
   conflicts_with "socktainer", because: "both install `socktainer` binaries"
 
