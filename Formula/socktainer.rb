@@ -13,8 +13,10 @@ class Socktainer < Formula
 
   depends_on xcode: ["26.0", :build] if build.head?
   depends_on arch: :arm64
-  depends_on :macos
-  depends_on macos: :tahoe
+
+  on_macos do
+    depends_on macos: :tahoe
+  end
 
   conflicts_with "socktainer-next", because: "both install `socktainer` binaries"
 
