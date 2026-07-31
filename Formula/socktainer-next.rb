@@ -1,9 +1,9 @@
 class SocktainerNext < Formula
-  version "1.2.0-next.202607310639-ee16c46"
+  version "1.2.0-next.202607310902-37e4ddd"
   desc "Docker-compatible REST API on top of Apple container"
   homepage "https://github.com/socktainer/socktainer"
   url "https://github.com/socktainer/prereleases/releases/download/v#{version}/socktainer.zip"
-  sha256 "85722ba4661894c7a5db985378685070b507ed06863812c8a7b2d2d43fd00398"
+  sha256 "532ee57d54cfa1265a2c129e7e190ed5bf4e7884b9bccdd33d2ce4e1672ef496"
   livecheck do
     url(:url)
     strategy(:github_latest)
