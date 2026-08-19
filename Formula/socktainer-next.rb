@@ -24,7 +24,9 @@ class SocktainerNext < Formula
   end
 
   service do
-    run [opt_bin / "socktainer"]
+    args = [opt_bin / "socktainer"]
+    args << "--no-check-compatibility" if ENV["SOCKTAINER_NO_CHECK_COMPATIBILITY"] == "1"
+    run args
     keep_alive true
     environment_variables PATH: std_service_path_env
     log_path var / "log/socktainer.log"
@@ -37,6 +39,9 @@ class SocktainerNext < Formula
 
       Requires native Apple macOS container (https://github.com/apple/container)
       Currently, Apple container is not a dependency of this Formula.
+
+      To disable the Apple container version compatibility check for the service:
+        SOCKTAINER_NO_CHECK_COMPATIBILITY=1 brew services restart socktainer-next
     EOS
   end
 
